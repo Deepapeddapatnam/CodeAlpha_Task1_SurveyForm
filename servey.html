@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-page Survey</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #222831;
+}
+
+form {
+  max-width: 400px;
+  margin: 20px auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[type="submit"] {
+  background-color: #28a745;
+}
+
+.page {
+  display: none;
+}
+
+.page[data-page="1"] {
+  display: block;
+}
+
+.page[data-page="2"] {
+  display: none;
+}
+
+.page[data-page="3"] {
+  display: none;
+}
+
+</style>
+</head>
+<body>
+  <form id="surveyForm" action="submit.php" method="post">
+    <div class="page" data-page="1">
+      <h2>Page 1</h2>
+      <label>Name:</label>
+      <input type="text" name="name" required>
+      <button type="button" onclick="nextPage(2)">Next</button>
+    </div>
+    <div class="page" data-page="2">
+      <h2>Page 2</h2>
+      <label>Email:</label>
+      <input type="email" name="email" required>
+      <button type="button" onclick="prevPage(1)">Previous</button>
+      <button type="button" onclick="nextPage(3)">Next</button>
+    </div>
+    <div class="page" data-page="3">
+      <h2>Page 3</h2>
+      <label>Age:</label>
+      <input type="number" name="age" required>
+      <button type="button" onclick="prevPage(2)">Previous</button>
+      <button type="submit">Submit</button>
+    </div>
+    <input type="hidden" name="currentPage" id="currentPage">
+  </form>
+
+  <script>
+    const form = document.getElementById('surveyForm');
+    const pages = document.querySelectorAll('.page');
+    const currentPageInput = document.getElementById('currentPage');
+
+    form.addEventListener('submit', function(event) {
+      // Save the current page before submitting the form
+      currentPageInput.value = getCurrentPage();
+    });
+
+    function getCurrentPage() {
+      const currentPage = Array.from(pages).find(page => page.style.display === 'block');
+      return currentPage ? currentPage.getAttribute('data-page') : null;
+    }
+
+    function showPage(pageNumber) {
+      pages.forEach(page => page.style.display = 'none');
+      document.querySelector(`[data-page="${pageNumber}"]`).style.display = 'block';
+    }
+
+    function nextPage(pageNumber) {
+      showPage(pageNumber);
+    }
+
+    function prevPage(pageNumber) {
+      showPage(pageNumber);
+    }
+
+    // Resume the survey from where it left off
+    const savedPage = localStorage.getItem('currentPage');
+    if (savedPage) {
+      showPage(savedPage);
+    }
+  </script>
+</body>
+</html>
+
